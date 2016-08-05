@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="0.5"
+    android:background="@android:color/transparent">
+
+    <GridView
+        android:id="@+id/forecast"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:horizontalSpacing="2dp"
+        android:numColumns="5"
+        android:stretchMode="columnWidth">
+
+    </GridView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/forecast"
+        android:layout_marginTop="2dp"
+        android:background="@android:color/darker_gray" />
+
+    <LinearLayout
+        android:id="@+id/weather_detail"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
+        android:layout_below="@id/forecast"
+        android:orientation="horizontal">
+
+        <ListView
+            android:id="@+id/current_des"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.5"
+            android:clickable="false"
+            android:contextClickable="false"
+            android:fastScrollEnabled="false" />
+
+        <ListView
+            android:id="@+id/current_value"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.5"
+            android:clickable="false"
+            android:contextClickable="false"
+            android:fastScrollEnabled="false" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/weather_detail"
+        android:layout_margin="2dp"
+        android:background="@android:color/darker_gray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/weather_detail"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="right"
+            android:paddingRight="20dp"
+            android:paddingTop="17dp"
+            android:text="@string/slideview_footer"
+            android:textSize="16dp" />
+
+        <TextClock
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="left"
+            android:paddingLeft="20dp"
+            android:paddingTop="17dp"
+            android:textSize="16dp" />
+
+    </LinearLayout>
+</RelativeLayout>
