@@ -1,3 +1,39 @@
+This is modified README which is based on the original DL-Coding-Challenge-Pulibc README file
+
+# DroidWeather
+Welcome to Droid Weather
+Droid Weather is finished in 4 hours in DL coding challenge. It is a fully funcational weather app that allows you to checkout weather information based your current location. 
+
+Features
+---
+* Automatically geolookup
+* Fetching weather condition through www.wunderground.com's weather API
+* Up to 3 days forcast including day and night
+* Rich weather format, including UV index, precipitation, humidity, pressure, wind and feels-like
+
+Architecture
+---
+Droid Weather is built on a MVP (model-view-presenter) architecture. In model layer, the low level network interactor sends http request to API endpoint and fetch the raw data back to presenter. Presenter is an intermidiante layer that analyse, process and package the data so the data are ready to be present in the view layer. The view is the top layer that concentrates only UI event. 
+MVP makes everything more clear so that development can be done in hours. 
+
+UI
+---
+Due to the time limit, only a simple UI is designed. There's a main view with a slide up panel. The slide-up panel is grabbed from 3rd party package. Current weather condition is presented in the main view, forecast and detailed weather info are in the slide up panel. When the panel is in collapse status, only a row of forecast infomation is shown at the bottom of the screen, user can slide the panel up to view more detailed weather conditions. The forecast slot and detailed condition slots are GridView and ListView respectively, fed by two customized adapters. The original thinking including adding a radar plot in the slide-up panel, however, it is not support for entry level API, I have to purchase higher level API to get it done. So I didn't go with that, but it's definitely doable.
+
+Third party libraries
+---
+* Android sliding up pannel: 3.3.0  			---> https://github.com/umano/AndroidSlidingUpPanel
+* Android Asynchronous Http Client: 1.4.9 		---> http://loopj.com/android-async-http/
+* ButterKnife: 7.0.1					---> http://jakewharton.github.io/butterknife/
+* Glide: 3.70						---> https://github.com/bumptech/glide
+
+Note
+---
+There are two screenshots can be found at the root of the repository
+
+Original document
+---
+
 # DL-Coding-Challenge
 Welcome to the Detroit Labs coding challenge. 
 
