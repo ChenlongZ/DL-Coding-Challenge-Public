@@ -29,7 +29,6 @@ public class WeatherHttpClient {
      * @param callback      callback to response the http request result;
      */
     public static void get (String url, HashMap<String, String> params, BaseCallback callback) {
-
         // fetching without extra parameters
         if (params == null) {
             client.get(url, new CustomizedHandler(callback));
@@ -43,17 +42,13 @@ public class WeatherHttpClient {
      * customized to accept JSON response as well as to pass on the response to presenters through callback
      */
     static class CustomizedHandler extends JsonHttpResponseHandler {
-
         private BaseCallback mCallback;
-
         public CustomizedHandler (BaseCallback callback) {
-
             this.mCallback = callback;
         }
 
         @Override
         public void onSuccess (int statusCode, Header[] headers, JSONArray response) {
-
             if (mCallback != null) {
                 try {
                     this.mCallback.onSuccess (statusCode, response);
@@ -65,7 +60,6 @@ public class WeatherHttpClient {
 
         @Override
         public void onSuccess (int statusCode, Header[] headers, JSONObject response) {
-
             if (mCallback != null) {
                 try {
                     this.mCallback.onSuccess(statusCode, response);

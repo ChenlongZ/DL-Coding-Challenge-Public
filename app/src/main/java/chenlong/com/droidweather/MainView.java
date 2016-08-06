@@ -60,8 +60,4 @@ public interface MainView {
      */
     public void onForecstFailed();
 
-    /**
-     * the default view
-     */
-    public void setDefaultView();
 }

@@ -16,7 +16,6 @@ public final class Utils {
      * @param context       Application context
      */
     public static boolean checkConnectivity(Context context) {
-
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

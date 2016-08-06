@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,15 +67,22 @@ public class MainActivity extends AppCompatActivity implements MainView{
         // binding views
         ButterKnife.bind(this);
 
+        // init presenters
+        mCurrentWeatherPresenter = new CurrentWeatherPresenter(this);
+//        mForecastPresenter = new ForecastPresenter(this);
+
         // checking network
         if (!Utils.checkConnectivity(this)) {
-            setDefaultView();
+            Toast.makeText(MainActivity.this,
+                    "No network... check your connection",
+                    Toast.LENGTH_LONG).show();
         }
 
         // register location listener
         registerLocationListener();
         try {
-            Location prevLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Location prevLocation
+                    = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             this.acquireGeoInfo(prevLocation.getLatitude(), prevLocation.getLongitude());
         } catch (SecurityException error) {
             Log.e(TAG, error.getMessage());
@@ -86,14 +94,14 @@ public class MainActivity extends AppCompatActivity implements MainView{
      * Register GPS sensor listener, listener will trigger weather info update upon location change
      */
     public void registerLocationListener() {
-
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 Log.d(TAG, "Location info found");
                 if (prevLocation != null) {
-                    if (Math.abs(location.getLatitude() - prevLocation.getLatitude()) < 0.01 && Math.abs(location.getLongitude() - prevLocation.getLongitude()) < 0.01) {
+                    if (Math.abs(location.getLatitude() - prevLocation.getLatitude()) < 0.01
+                            && Math.abs(location.getLongitude() - prevLocation.getLongitude()) < 0.01) {
                         // we are too close to last location, skip fetching new data;
                     } else {
                         MainActivity.this.acquireGeoInfo(location.getLatitude(), location.getLongitude());
@@ -119,7 +127,10 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
             }
         };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             String[] permissions = new String[2];
             permissions[0] = Manifest.permission.ACCESS_COARSE_LOCATION;
             permissions[1] = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -139,7 +150,8 @@ public class MainActivity extends AppCompatActivity implements MainView{
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     try {
-                        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+                        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                                0, 0, mLocationListener);
                     } catch (SecurityException error) {
                         Log.e(TAG, "still don't have permission");
                     }
@@ -152,12 +164,12 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
     @Override
     public void acquireGeoInfo(double latitude, double longitude) {
-
+        mCurrentWeatherPresenter.geoLookup(latitude, longitude);
     }
 
     @Override
     public void acquireCurrentCondition(String secondary) {
-
+        mCurrentWeatherPresenter.fetchCurrentConditions(secondary);
     }
 
     @Override
@@ -167,22 +179,40 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
     @Override
     public void onGeoAcquired(String state, String city) {
-
+        String new_city = city.replace(' ', '_');
+        this.acquireCurrentCondition(state + "/" + new_city + ".json");
+        this.acquireForecast(state + "/" + new_city + ".json");
     }
 
     @Override
     public void onGeoFailed() {
-
+        Toast.makeText(MainActivity.this, "Location lookup failed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onCurrentConditionAcquired(HashMap<String, String> data) {
+        // debug
+        Log.d(TAG, "updating current weather view content");
 
+        // setting up main content
+        mainCity.setText(data.get("city"));
+        mainCondition.setText(data.get("weather"));
+        mainTemp.setText((data.get("temp_f")) + " F");
+
+        /** setting up slideup panel
+         *  there are two listview, one for description and one for the value
+         *  so that there will be two adapter preparing two dataset to the two listview
+         *  a single boolean passing to the constructor will tell them apart
+         */
+        detailAdapterDesption = new DetailAdapter(MainActivity.this, data, true);
+        currentDescriptionList.setAdapter(detailAdapterDesption);
+        detailAdapterValue = new DetailAdapter(MainActivity.this, data, false);
+        currentValueList.setAdapter(detailAdapterValue);
     }
 
     @Override
     public void onCurrentConditionFailed() {
-
+        Toast.makeText(MainActivity.this, "Fetch condition failed", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -192,11 +222,6 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
     @Override
     public void onForecstFailed() {
-
-    }
-
-    @Override
-    public void setDefaultView() {
 
     }
 }
