@@ -31,7 +31,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements MainView{
 
     /** for debug */
-    private static final String TAG = Constants.PROJECT_NAME + "-" + MainActivity.class.getSimpleName();
+    private static final String TAG = Constants.PROJECT_NAME + "-" +
+            MainActivity.class.getSimpleName();
 
     /** activity related member varibles */
     private CurrentWeatherPresenter mCurrentWeatherPresenter;
@@ -128,15 +129,13 @@ public class MainActivity extends AppCompatActivity implements MainView{
             }
         };
         if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             String[] permissions = new String[2];
-            permissions[0] = Manifest.permission.ACCESS_COARSE_LOCATION;
             permissions[1] = Manifest.permission.ACCESS_FINE_LOCATION;
             this.requestPermissions(permissions, 1);
         }
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                0, 0, mLocationListener);
     }
 
     /**
@@ -174,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
     @Override
     public void acquireForecast(String secondary) {
-
+        mForecastPresenter.fetchForecast(secondary);
     }
 
     @Override
@@ -217,11 +216,12 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
     @Override
     public void onForecastAcquired(List<Map<String, String>> data) {
-
+        forecastAdapter = new ForecastAdapter(MainActivity.this, data);
+        forecastGrid.setAdapter(forecastAdapter);
     }
 
     @Override
-    public void onForecstFailed() {
-
+    public void onForecastFailed() {
+        Toast.makeText(MainActivity.this, "Fetch forecast failed", Toast.LENGTH_LONG).show();
     }
 }

@@ -58,6 +58,6 @@ public interface MainView {
     /**
      * callback when forecsting data fetching failed
      */
-    public void onForecstFailed();
+    public void onForecastFailed();
 
 }

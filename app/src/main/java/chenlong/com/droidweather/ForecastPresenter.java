@@ -47,7 +47,9 @@ public class ForecastPresenter {
         mForecastData = new ArrayList<>(5);
         JSONArray forecast;
         try {
-            forecast = data.getJSONObject("forecast").getJSONObject("txt+forecast").getJSONArray("forecastday");
+            forecast = data.getJSONObject("forecast")
+                    .getJSONObject("txt_forecast")
+                    .getJSONArray("forecastday");
             for (int i = 0; i < 5; i++) {
                 JSONObject jo = (JSONObject) forecast.get(i);
                 Map<String, String> entry = new HashMap<>();
@@ -58,20 +60,30 @@ public class ForecastPresenter {
                 temp = jo.getString("fcttext");
                 tmp = temp.split(" ");
                 for (String s : tmp) {
+                    if (s.endsWith("F.")) {
+                        entry.put("temp", s.substring(0, s.length() - 1));
+                    }
                     if (s.endsWith("F")) {
-                        entry.put("temp", s);
+                        entry.put("temp", s.substring(0, s.length()));
                     }
                 }
                 mForecastData.add(entry);
             }
             Log.d(TAG, "parsing forecasting data successful");
+            Log.d(TAG, mForecastData.toString());
+            mMainView.onForecastAcquired(mForecastData);
         } catch (JSONException error) {
             Log.e(TAG, error.getMessage());
         }
     }
 
+    /**
+     * callback on forecast fetch failure
+     *
+     * @param statusCode
+     */
     public void onForecastFailed(int statusCode) {
         Log.e(TAG, "Acquiring forecast failed, status code = " + statusCode);
-        mMainView.onForecstFailed();
+        mMainView.onForecastFailed();
     }
 }
