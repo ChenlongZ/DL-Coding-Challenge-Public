@@ -6,9 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by zicdq_000 on 2016/8/5.
- */
 public class CurrentWeatherInteractor {
 
     /** for debug */

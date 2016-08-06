@@ -7,9 +7,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-/**
- * Created by zicdq_000 on 2016/8/5.
- */
 public class CurrentWeatherPresenter {
 
     /** for debug */
@@ -24,6 +21,15 @@ public class CurrentWeatherPresenter {
         this.mCurrentWeatherInteractor = new CurrentWeatherInteractor(this);
     }
 
+    /**
+     * locate the the city and state we are in
+     * the city and state and two necessary parameters to request weather info
+     * we use the provided API and the latitude and longitude info get from device sensor
+     * for geo lookup
+     *
+     * @param latitude                  latitude get from device sensor
+     * @param longitude                 longitude get from device sensor
+     */
     public void geoLookup(double latitude, double longitude) {
         String geoUrl;
         StringBuilder sb = new StringBuilder();
@@ -38,6 +44,10 @@ public class CurrentWeatherPresenter {
         mCurrentWeatherInteractor.getLocation(geoUrl);
     }
 
+    /**
+     * passing the full url to interactor to get condition data
+     * @param secondary                 the secondary url to be appended
+     */
     public void fetchCurrentConditions(String secondary) {
         String conditionUrl;
         conditionUrl = Constants.URLS.CURRENT.getUrl() + secondary;
@@ -46,6 +56,12 @@ public class CurrentWeatherPresenter {
         mCurrentWeatherInteractor.getCondition(conditionUrl);
     }
 
+    /**
+     * geo success callback: extract city and state then pass them to main view
+     * to initiate other requests
+     *
+     * @param data                      packed JSON geo data
+     */
     public void onGeoLookupSuccess(JSONObject data) {
         JSONObject location;
         String state = "";
@@ -63,11 +79,22 @@ public class CurrentWeatherPresenter {
         }
     }
 
+    /**
+     * Geolookup failure callback
+     *
+     * @param statusCode
+     */
     public void onGeoLookupFailed(int statusCode) {
         Log.e(TAG, "Location lookup failed, status code = " + statusCode);
         mMainView.onGeoFailed();
     }
 
+    /**
+     * condition fetching successful callback:
+     * processing and passing data to mainview to prepare the adapter
+     *
+     * @param data                  condition data in JSON format
+     */
     public void onConditionSuccess(JSONObject data) {
         mCurrentCondition = new HashMap<>();
         JSONObject condition;
@@ -92,6 +119,11 @@ public class CurrentWeatherPresenter {
         }
     }
 
+    /**
+     * condition failure callback
+     *
+     * @param statusCode                the error code
+     */
     public void onConditionFailed(int statusCode) {
         Log.e(TAG, "Condition acquisition failed, status code = " + statusCode);
         mMainView.onCurrentConditionFailed();

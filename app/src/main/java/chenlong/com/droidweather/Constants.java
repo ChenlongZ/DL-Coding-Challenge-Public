@@ -7,6 +7,9 @@ public final class Constants {
 
     public static final String BASE_URL = "http://api.wunderground.com/api/" + APIKEY;
 
+    /**
+     *  a URLS constants enum for quick endpoint url lookup
+     */
     public enum  URLS {
         GEO(BASE_URL + "/geolookup/q/"),
         CURRENT(BASE_URL + "/conditions/q/"),

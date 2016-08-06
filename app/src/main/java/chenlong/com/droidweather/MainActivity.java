@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
         // init presenters
         mCurrentWeatherPresenter = new CurrentWeatherPresenter(this);
-//        mForecastPresenter = new ForecastPresenter(this);
+        mForecastPresenter = new ForecastPresenter(this);
 
         // checking network
         if (!Utils.checkConnectivity(this)) {

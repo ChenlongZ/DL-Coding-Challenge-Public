@@ -1,7 +1,77 @@
 package chenlong.com.droidweather;
 
-/**
- * Created by zicdq_000 on 2016/8/5.
- */
+import android.content.Context;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ForecastPresenter {
+
+    /** for debug */
+    private static final String TAG = Constants.PROJECT_NAME + "-" +
+            ForecastPresenter.class.getSimpleName();
+
+    private MainView mMainView;
+    private ForecastInteractor mForecastInteractor;
+    private List<Map<String, String>> mForecastData;
+
+    public ForecastPresenter (MainView mainView) {
+        this.mMainView = mainView;
+        this.mForecastInteractor = new ForecastInteractor(this);
+    }
+
+    /**
+     * handle url and pass on request to Interactor
+     *
+     * @param secondary             secondary url to be append
+     */
+    public void fetchForecast(String secondary) {
+        String forecastUrl;
+        forecastUrl = Constants.URLS.FORECAST.getUrl() + secondary;
+        mForecastInteractor.getForecast(forecastUrl);
+    }
+
+    /**
+     *  forecast request callback and organize data to be ready for presenting
+     *
+     *  @param data                 response data to be handled
+     */
+    public void onForecastSuccess(JSONObject data) {
+        mForecastData = new ArrayList<>(5);
+        JSONArray forecast;
+        try {
+            forecast = data.getJSONObject("forecast").getJSONObject("txt+forecast").getJSONArray("forecastday");
+            for (int i = 0; i < 5; i++) {
+                JSONObject jo = (JSONObject) forecast.get(i);
+                Map<String, String> entry = new HashMap<>();
+                String temp;
+                String[] tmp;
+                entry.put("icon_url", jo.getString("icon_url"));
+                entry.put("day", jo.getString("title"));
+                temp = jo.getString("fcttext");
+                tmp = temp.split(" ");
+                for (String s : tmp) {
+                    if (s.endsWith("F")) {
+                        entry.put("temp", s);
+                    }
+                }
+                mForecastData.add(entry);
+            }
+            Log.d(TAG, "parsing forecasting data successful");
+        } catch (JSONException error) {
+            Log.e(TAG, error.getMessage());
+        }
+    }
+
+    public void onForecastFailed(int statusCode) {
+        Log.e(TAG, "Acquiring forecast failed, status code = " + statusCode);
+        mMainView.onForecstFailed();
+    }
 }
