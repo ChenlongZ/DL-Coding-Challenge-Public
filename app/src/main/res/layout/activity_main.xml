@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="#db3998d7"
+    android:background="@drawable/main_background"
     tools:context="zic.myapplication.MainActivity"
     android:nestedScrollingEnabled="true">
 
